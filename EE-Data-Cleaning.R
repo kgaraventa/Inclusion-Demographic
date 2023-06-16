@@ -15,7 +15,8 @@ ee_demographics <- read_excel(path = "I:\\Staff\\GSSW\\SALEM\\EVALUATION\\Demogr
 
 # Clean Data --------------------------------------------------------------
 
-clean_ee_demographics <- ee_demographics %>%
+clean_ee_norace_demos <- ee_demographics %>%
+  select(-(test_name:date_finished)) %>% 
   mutate(group_name = recode(group_name, "EE 2022 October 21" = "October 2022",
                              "EE 2022 November 18" = "November 2022",
                              "EE 2022 12 16" = "December 2022",
@@ -80,7 +81,6 @@ clean_ee_race_demos <- ee_demographics %>%
   drop_na(selection) %>% 
   separate_longer_position(selection, width = 1) %>% 
   mutate(selection = na_if(selection, "A")) %>% 
-  drop_na(selection) %>% 
   mutate(selection = case_when(
     racial_group == "asian" & selection == "B" ~ "Asian Indian",
     racial_group == "asian" & selection == "C" ~ "Chinese",
@@ -126,4 +126,22 @@ clean_ee_race_demos <- ee_demographics %>%
     racial_group == "white" & selection == "C" ~ "Slavic",
     racial_group == "white" & selection == "D" ~ "Western European",
     racial_group == "white" & selection == "E" ~ "Not Listed/Prefer to Self-Describe",
-    TRUE ~ "Other")) 
+    TRUE ~ "N/A or No Answer")) %>% 
+  mutate(racial_group = recode(racial_group, "asian" = "asian_named",
+                               "aian" = "aian_named",
+                               "blaa" = "blaa_named",
+                               "his_lat" = "his_lat_named",
+                               "mid_east" = "mid_east_named",
+                               "nhpi" = "nhpi_named",
+                               "white" = "white_named")) %>% 
+  pivot_wider(id_cols = identifier,
+              names_from = racial_group,
+              values_from = selection,
+              values_fill = NA,
+              values_fn = list)
+
+clean_ee_all_demos <- left_join(clean_ee_norace_demos,
+                                clean_ee_race_demos,
+                                by = "identifier") %>% 
+  select(-(asian:white)) %>% 
+  relocate(describe_race, .after = last_col())
