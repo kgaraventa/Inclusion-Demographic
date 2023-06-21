@@ -137,8 +137,14 @@ clean_ee_race_demos <- ee_demographics %>%
   pivot_wider(id_cols = identifier,
               names_from = racial_group,
               values_from = selection,
-              values_fill = NA,
-              values_fn = list)
+              values_fn = list()) %>% 
+  mutate(asian_named = as.character(asian_named)) %>% 
+  mutate(aian_named = as.character(aian_named)) %>% 
+  mutate(blaa_named = as.character(blaa_named)) %>% 
+  mutate(his_lat_named = as.character(his_lat_named)) %>% 
+  mutate(mid_east_named = as.character(mid_east_named)) %>% 
+  mutate(nhpi_named = as.character(nhpi_named)) %>% 
+  mutate(white_named = as.character(white_named))
 
 clean_ee_all_demos <- left_join(clean_ee_norace_demos,
                                 clean_ee_race_demos,
