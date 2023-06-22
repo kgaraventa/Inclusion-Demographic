@@ -16,4 +16,45 @@ knitr::opts_chunk$set(echo = FALSE,
                       cache = FALSE)
 ```
 
+```{r library, include=FALSE}
+library(tidyverse)
+library(skimr)
+library(janitor)
+library(ggthemes)
+library(hrbrthemes)
+library(readxl)
+library(ggtext)
+library(ggalt)
+library(ragg)
+library(systemfonts)
+library(gt)
+library(knitr)
+library(pagedown)
+library(dplyr)
+library(scales)
+library(lubridate)
+library(ggplot2)
+```
+
+```{r rds file, include=FALSE}
+ee_all_demos <- readRDS("data/clean-ee-all-demos.rds")
+```
+
+# Demographics Questions
+Asked at the end of the knowledge assessment
+
+```{r gender identity table}
+gender_ee_demos <- ee_all_demos %>% 
+  select(identifier, group_name, gender_id) %>% 
+  count(gender_id) %>% 
+  mutate(percent_total = n/sum(n)) 
+
+gender_ee_demos %>%  
+  arrange(desc(n)) %>% 
+  select(-n) %>% 
+  gt() %>% 
+  cols_label(gender_id = md("**Gender Identity**"),
+             percent_total = md("**Percent**")) %>% 
+  fmt_percent(columns = c(gender_id, percent_total), decimals = 1)
+```
 
