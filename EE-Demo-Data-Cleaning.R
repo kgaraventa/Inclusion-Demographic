@@ -7,6 +7,8 @@ library(janitor)
 
 # Import File -----------------------------------------------------------
 
+## The file path will need to be changed as I was working with sample data and not the actual data. Some of the other code may need to be changed as well, but the skeleton should work.
+
 ee_demographics <- read_excel(path = "I:\\Staff\\GSSW\\SALEM\\EVALUATION\\Demographics Data\\Kayley R Project-EE Demographics DB-V2.xlsx",
                               sheet = "data", 
                               col_names = TRUE,
