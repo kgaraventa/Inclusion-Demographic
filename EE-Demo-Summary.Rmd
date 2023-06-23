@@ -3,6 +3,9 @@ title: "Demographic Summary"
 subtitle: "Training: Essential Elements"
 date: "April-June 2023"
 
+params:
+  quarter: "2022Q4"
+
 output: 
   html_document:
     df_print: paged
@@ -36,25 +39,79 @@ library(lubridate)
 library(ggplot2)
 ```
 
+```{r colors, include=FALSE}
+psu_green <- "#6d8d24"
+psu_electricgreen <- "#cfd82d"
+psu_forestgreen <- "#213921"
+psu_blue <- "#008ac1"
+psu_lightblue <- "#a5dff9"
+psu_sand <- "#e8d3a2"
+psu_stone <- "#8a8a67"
+psu_yellow <- "#ffc20e"
+psu_red <- "#e64927"
+psu_orange <- "#f68b1f"
+psu_purple <- "#650360"
+```
+
 ```{r rds file, include=FALSE}
 ee_all_demos <- readRDS("data/clean-ee-all-demos.rds")
 ```
 
-# Demographics Questions
+## Demographics Questions
 Asked at the end of the knowledge assessment
+
+```{r number trainees, include=FALSE}
+number_trainees <- ee_all_demos %>% 
+  filter(quarter == params$quarter) %>% 
+  count(quarter) %>% 
+  pull(n)
+```
+
+Number of Trainees in Quarter: **`r number_trainees`**
+
+### Gender Identity
 
 ```{r gender identity table}
 gender_ee_demos <- ee_all_demos %>% 
-  select(identifier, group_name, gender_id) %>% 
+  filter(quarter == params$quarter) %>% 
+  select(identifier, gender_id) %>% 
+  mutate(gender_id = recode(gender_id, "No answer" = "Blank 'Missing Data'^")) %>%
+  mutate(gender_id = fct_relevel(gender_id, c("Cisgender Man", "Cisgender Woman", "Transgender Man", "Transgender Woman", "Non-binary Transgender", "Non-binary Non-transgender", "Prefer Not to Answer", "Prefer to Describe", "Blank 'Missing Data'^"))) %>% 
   count(gender_id) %>% 
   mutate(percent_total = n/sum(n)) 
 
 gender_ee_demos %>%  
-  arrange(desc(n)) %>% 
   select(-n) %>% 
   gt() %>% 
+  tab_options(table.align = "left",
+              column_labels.background.color = psu_purple) %>% 
   cols_label(gender_id = md("**Gender Identity**"),
              percent_total = md("**Percent**")) %>% 
+  cols_align(align = "left",
+             columns = gender_id) %>% 
+  cols_align(align = "center",
+             columns = percent_total) %>% 
   fmt_percent(columns = c(gender_id, percent_total), decimals = 1)
+```
+*^'Missing Data' reflects that no selection was made by participant*
+
+
+If you selected "prefer to describe," or if you'd like to provide more detail about your selection(s), please do so here:
+```{r gender self describe}
+gender_ee_self_describe <- ee_all_demos %>% 
+  filter(quarter == params$quarter) %>% 
+  select(identifier, describe_gender) %>% 
+  mutate(describe_gender = na_if(describe_gender, "No answer")) %>% 
+  mutate(describe_gender = na_if(describe_gender, "n/a")) %>% 
+  mutate(describe_gender = na_if(describe_gender, "N/A")) %>% 
+  mutate(describe_gender = na_if(describe_gender, "na")) %>% 
+  mutate(describe_gender = na_if(describe_gender, "/")) %>% 
+  drop_na(describe_gender)
+
+gender_ee_self_describe %>% 
+  select(describe_gender) %>% 
+  gt() %>% 
+  tab_options(table.align = "left") %>% 
+  cols_label(describe_gender = md("**Describe Gender**"))
 ```
 
