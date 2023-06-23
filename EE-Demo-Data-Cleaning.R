@@ -12,7 +12,7 @@ library(janitor)
 ee_demographics <- read_excel(path = "I:\\Staff\\GSSW\\SALEM\\EVALUATION\\Demographics Data\\Kayley R Project-EE Demographics DB-V2.xlsx",
                               sheet = "data", 
                               col_names = TRUE,
-                              col_types = c("guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "date", "guess", "guess", "guess", "guess", "guess", "guess", "guess","guess","guess","guess","guess")) %>% 
+                              col_types = c("guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "date", "guess", "guess", "guess", "guess", "guess", "guess", "guess","guess","guess","guess","guess")) %>% 
   clean_names() 
 
 # Clean Data --------------------------------------------------------------
