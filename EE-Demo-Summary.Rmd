@@ -115,3 +115,87 @@ gender_ee_self_describe %>%
   cols_label(describe_gender = md("**Describe Gender**"))
 ```
 
+### Racial Identity
+
+```{r racial identity table}
+race_ee_demos <- ee_all_demos %>% 
+  filter(quarter == params$quarter) %>% 
+  select(identifier, asian_named:white_named) %>%
+  pivot_longer(cols = -identifier,
+               names_to = "racial_group",
+               values_to = "selection") %>% 
+  mutate(racial_group = recode(racial_group, "asian_named" = "Asian",
+                             "aian_named" = "American Indian and Alaska Native",
+                             "blaa_named" = "Black and African American",
+                             "his_lat_named" = "Hispanic and Latino/a/e",
+                             "mid_east_named" = "Middle Eastern",
+                             "nhpi_named" = "Native Hawaiian and Pacific Islander",
+                             "white_named" = "White")) %>% 
+  separate_longer_delim(selection, delim = ", ") %>%  
+  mutate(selection = str_remove(selection, '["]')) %>% 
+  mutate(selection = str_remove(selection, '[(]'))%>% 
+  mutate(selection = str_remove(selection, '[)]')) %>% 
+  mutate(selection = str_remove(selection, '["]')) %>% 
+  mutate(selection = str_remove(selection, "^c")) %>% 
+  mutate(selection = str_remove(selection, "^or ")) %>% 
+  mutate(selection = na_if(selection, "N/A or No Answer")) %>% 
+  mutate(selection = na_if(selection, "N/A")) %>% 
+  mutate(selection = na_if(selection, "n/a")) %>% 
+  mutate(selection = na_if(selection, "No answer")) %>%
+  mutate(selection = na_if(selection, "NULL")) %>% 
+  drop_na(selection)
+  
+race_group_only <- race_ee_demos %>% 
+  select(-selection) %>% 
+  count(racial_group) %>% 
+  mutate(percent_total = n/sum(n)) 
+
+race_group_only %>%  
+  select(-n) %>% 
+  gt() %>% 
+  tab_options(table.align = "left",
+              column_labels.background.color = psu_green) %>% 
+  cols_label(racial_group = md("**Race/Origin**"),
+             percent_total = md("**Percent**")) %>% 
+  cols_align(align = "left",
+             columns = racial_group) %>% 
+  cols_align(align = "center",
+             columns = percent_total) %>% 
+  fmt_percent(columns = c(racial_group, percent_total), decimals = 1)
+```
+
+```{r number missing racial identity data}
+number_race_missing <- race_ee_demos %>% 
+  pivot_wider(id_cols = identifier,
+              names_from = racial_group,
+              values_from = selection) %>% 
+  mutate(identifier_true = TRUE) %>% 
+  count(identifier_true) %>% 
+  pull(n)
+```
+**Blank 'Missing Data'^: `r scales::label_percent()((number_trainees - number_race_missing)/number_trainees)`**
+
+*^'Missing Data' reflects that no selection was made by participant*
+
+
+If you selected "prefer to describe," or if you'd like to provide more detail about your selection(s), please do so here:
+
+```{r race self describe}
+race_ee_self_describe <- ee_all_demos %>% 
+  filter(quarter == params$quarter) %>% 
+  select(identifier, describe_race) %>% 
+  mutate(describe_race = na_if(describe_race, "No answer")) %>% 
+  mutate(describe_race = na_if(describe_race, "n/a")) %>% 
+  mutate(describe_race = na_if(describe_race, "N/A")) %>% 
+  mutate(describe_race = na_if(describe_race, "na")) %>% 
+  mutate(describe_race = na_if(describe_race, "NA")) %>% 
+  mutate(describe_race = na_if(describe_race, "/")) %>% 
+  drop_na(describe_race)
+
+race_ee_self_describe %>% 
+  select(describe_race) %>% 
+  gt() %>% 
+  tab_options(table.align = "left") %>% 
+  cols_label(describe_race = md("**Describe Race**"))
+```
+
