@@ -106,7 +106,7 @@ clean_ee_race_demos <- ee_demographics %>%
     racial_group == "his_lat" & selection == "B" ~ "Central American",
     racial_group == "his_lat" & selection == "C" ~ "Cuban",
     racial_group == "his_lat" & selection == "D" ~ "Mexican",
-    racial_group == "his_lat" & selection == "E" ~ "Mexican-American, Chicano/a",
+    racial_group == "his_lat" & selection == "E" ~ "Mexican-American or Chicano/a",
     racial_group == "his_lat" & selection == "F" ~ "Puerto Rican",
     racial_group == "his_lat" & selection == "G" ~ "South American",
     racial_group == "his_lat" & selection == "H" ~ "Not Listed/Prefer to Self-Describe",
