@@ -1,7 +1,7 @@
 ---
 title: "Demographic Summary"
 subtitle: "Training: Essential Elements"
-date: "April-June 2023"
+date: "October-December 2022"
 
 params:
   quarter: "2022Q4"
@@ -197,5 +197,25 @@ race_ee_self_describe %>%
   gt() %>% 
   tab_options(table.align = "left") %>% 
   cols_label(describe_race = md("**Describe Race**"))
+```
+
+```{r specific racial/ethnic identity function, include=FALSE}
+race_eth_ident <- function(rei_to_filter) {
+  race_ee_demos %>% 
+    count(racial_group, selection) %>% 
+    mutate(percent_total = n/sum(n)) %>%
+    filter(racial_group == rei_to_filter) %>% 
+    arrange(desc(n)) %>% 
+    select(-c(racial_group, n)) %>% 
+    gt() %>% 
+    tab_header(title = rei_to_filter) %>% 
+    cols_label(selection = md("**Racial or Ethnic Identity**"),
+             percent_total = md("**Percent**")) %>% 
+    fmt_percent(columns = c(selection, percent_total), decimals = 1)
+}
+```
+
+```{r specific racial/ethnic identity table(s), include=FALSE}
+race_eth_ident("American Indian and Alaska Native")
 ```
 
