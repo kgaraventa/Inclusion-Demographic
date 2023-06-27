@@ -71,6 +71,8 @@ Number of Trainees in Quarter: **`r number_trainees`**
 
 ### Gender Identity
 
+**Possible choices:** Cisgender Man, Cisgender Woman, Transgender Man, Transgender Woman, Non-binary Transgender, Non-binary Non-transgender, Prefer Not to Answer, and Prefer to Describe
+
 ```{r gender identity table}
 gender_ee_demos <- ee_all_demos %>% 
   filter(quarter == params$quarter) %>% 
