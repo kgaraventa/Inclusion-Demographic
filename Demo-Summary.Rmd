@@ -1,11 +1,11 @@
 ---
 title: "Demographic Summary"
-subtitle: "Training: Essential Elements"
-date: "October-December 2022"
+subtitle: "Training: Certification and Adoption Worker Training"
+date: "January-March 2023"
 
 params:
-  quarter: "2022Q4"
-  training: "EE"
+  quarter: "2123Q6"
+  training: "CA"
 
 output: 
   html_document:
